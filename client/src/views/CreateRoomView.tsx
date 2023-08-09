@@ -69,7 +69,7 @@ function CreateRoomView (): React.ReactNode {
     window.csController.emitter.on('lobbyres', ({ data }) => {
       const msg: LobbyResMsg = data
       if (msg.name === 'LobbyResSyncPrepareRoom') {
-        if (msg.data.state === false) { return }
+        if (!msg.data.state) { return }
         msg.data.players.forEach(p => {
           if (window.room !== undefined) {
             const newPlayer = new Player({ room: window.room, playerID: p.playerID, isHost: p.isHost, isBot: p.isBot })
@@ -122,7 +122,7 @@ function CreateRoomView (): React.ReactNode {
       </div>
       <div className="player-set-area">
         { players.map((p, i) => <div className="player-set-card" key={i}>
-          { (p.isHost === true) && <span className="host">★</span> }
+          { (p.isHost) && <span className="host">★</span> }
           <span className="name">{players[i].playerID}</span>
           <span className="ready"></span>
         </div>) }

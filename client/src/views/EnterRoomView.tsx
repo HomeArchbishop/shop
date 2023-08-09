@@ -14,7 +14,7 @@ function EnterRoomView (): React.ReactNode {
     window.csController.emitter.on('lobbyres', ({ data }) => {
       const msg: LobbyResMsg = data
       if (msg.name === 'LobbyResEnterRoom') {
-        if (msg.data.state === false) { return }
+        if (!msg.data.state) { return }
         window.room = new Room({ roomID: msg.data.roomID })
         window.routeTo('CreateRoomView')
       }

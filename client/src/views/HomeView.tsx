@@ -13,7 +13,7 @@ function HomeView (): React.ReactNode {
     window.csController.emitter.on('lobbyres', ({ data }) => {
       const msg: LobbyResMsg = data
       if (msg.name === 'LobbyResCreateRoom') {
-        if (msg.data.state === false) { return }
+        if (!msg.data.state) { return }
         window.room = new Room({ roomID: msg.data.roomID })
         window.routeTo('CreateRoomView')
       }

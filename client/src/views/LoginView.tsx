@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './LoginView.less'
 import { CSController } from '../controller/CSController'
-import { SystemNoticeMsg, type LobbyResMsg } from '../../../share/src/types/Msg'
+import { type SystemNoticeMsg, type LobbyResMsg } from '../../../share/src/types/Msg'
 
 const csController = new CSController({ isLocal: false })
 window.csController = csController
@@ -31,7 +31,7 @@ function LoginView (): React.ReactNode {
     csController.emitter.on('lobbyres', ({ data }) => {
       const msg = data as LobbyResMsg
       if (msg.name === 'LobbyResLogin') {
-        if (msg.data.state === true) {
+        if (msg.data.state) {
           window.playerID = msg.data.playerID
           window.routeTo('HomeView')
         }
