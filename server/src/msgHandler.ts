@@ -5,7 +5,7 @@ import type { SocketDB, PlayerDB, RoomDB } from './types/db'
 
 const msgHandler = {
   async handleDisconnection (socket: Socket): Promise<void> {
-    const socketDB: SocketDB = await dbGet(`socket:${socket.id as string}`)
+    const socketDB: SocketDB = await dbGet(`socket:${socket.id}`)
     if (socketDB === undefined) { return }
     const playerID = socketDB.playerID
     if (playerID === undefined) { return }
@@ -29,7 +29,7 @@ const msgHandler = {
       socket.emit('lobbynotice', { name: 'LobbyNoticeLeaveRoom', data: { playerID, roomID } } satisfies LobbyNoticeMsg)
     }
     await db.del(`player:${playerID}`)
-    await db.del(`socket:${socket.id as string}`)
+    await db.del(`socket:${socket.id}`)
   },
   async handleLoobyReqAndNotice (socket: Socket, msg: LobbyReqMsg | LobbyNoticeMsg): Promise<void> {
     console.log(msg)
@@ -45,7 +45,7 @@ const msgHandler = {
         return
       }
       await db.put(`player:${playerID}`, { online: true, socketID: socket.id, playerID } satisfies PlayerDB)
-      await db.put(`socket:${socket.id as string}`, { socketID: socket.id, playerID } satisfies SocketDB)
+      await db.put(`socket:${socket.id}`, { socketID: socket.id, playerID } satisfies SocketDB)
       socket.emit('lobbyres', { name: 'LobbyResLogin', data: { playerID: msg.data.playerID, state: true, _id: msg.data._id } })
     }
     if (msg.name === 'LobbyReqCreateRoom') {
@@ -68,7 +68,7 @@ const msgHandler = {
       } satisfies RoomDB)
       playerDB.roomID = roomID
       await db.put(`player:${playerID}`, playerDB)
-      socket.join(roomID)
+      await socket.join(roomID)
       socket.emit('lobbyres', { name: 'LobbyResCreateRoom', data: { playerID: msg.data.playerID, roomID, state: true, _id: msg.data._id } } satisfies LobbyResMsg)
     }
     if (msg.name === 'LobbyReqEnterRoom') {
@@ -108,12 +108,12 @@ const msgHandler = {
       await db.put(`room:${roomID}`, roomDB)
       playerDB.roomID = roomID
       await db.put(`player:${playerID}`, roomDB)
-      socket.join(roomID)
+      await socket.join(roomID)
       socket.to(roomID).emit('lobbynotice', { name: 'LobbyNoticeAddPlayer', data: { playerID: msg.data.playerID, roomID } } satisfies LobbyNoticeMsg)
       socket.emit('lobbyres', { name: 'LobbyResEnterRoom', data: { playerID: msg.data.playerID, roomID, _id: msg.data._id, state: true } } satisfies LobbyResMsg)
     }
     if (msg.name === 'LobbyReqSyncPrepareRoom') {
-      const roomDB: RoomDB = await dbGet(`room:${msg.data.roomID as string}`)
+      const roomDB: RoomDB = await dbGet(`room:${msg.data.roomID}`)
       if (roomDB === undefined) {
         // TODO
         socket.emit('lobbyres', { name: 'LobbyResSyncPrepareRoom', data: { playerID: msg.data.playerID, _id: msg.data._id, players: [], state: false } } satisfies LobbyResMsg)
@@ -135,7 +135,7 @@ const msgHandler = {
         if (playerDB?.roomID === roomID) {
           playerDB.roomID = undefined
           await db.put(`player:${playerID}`, playerDB)
-          ;(await socket.to(playerDB.socketID).fetchSockets()).forEach(s => s.leave(roomID))
+          ;(await socket.to(playerDB.socketID).fetchSockets()).forEach(s => { s.leave(roomID) })
         }
       }
       roomDB.players.splice(targetPlayerStateIndex, 1)
