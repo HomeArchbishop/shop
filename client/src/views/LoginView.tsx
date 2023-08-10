@@ -18,16 +18,16 @@ function LoginView (): React.ReactNode {
           csController.isLocal = true
         })
         .finally(() => {
-          csController.emitter.on('systemnotice', ({ data }) => {
-            const msg = data as SystemNoticeMsg
-            if (msg.name === 'SystemNoticeServerError') {
-              SystemErrorView
-            }
-          })
           setIsConnected(true)
           setIsConnecting(false)
         })
     }
+    csController.emitter.on('systemnotice', ({ data }) => {
+      const msg = data as SystemNoticeMsg
+      if (msg.name === 'SystemNoticeServerError') {
+        window.routeTo('SystemErrorView')
+      }
+    })
     csController.emitter.on('lobbyres', ({ data }) => {
       const msg = data as LobbyResMsg
       if (msg.name === 'LobbyResLogin') {

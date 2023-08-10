@@ -1,5 +1,5 @@
 import { socket } from './ws'
-import type { LobbyNoticeMsg, LobbyReqMsg, LobbyResMsg } from '../../../share/src/types/Msg'
+import type { LobbyNoticeMsg, LobbyReqMsg, LobbyResMsg, SystemNoticeMsg } from '../../../share/src/types/Msg'
 import { uid } from 'uid'
 import { EventEmitter } from '@billjs/event-emitter'
 
@@ -22,6 +22,9 @@ class CSController {
     const promise = new Promise<void>((resolve, reject) => { resolveFn = resolve; rejectFn = reject })
     socket.on('connect', resolveFn)
     socket.on('connect_error', rejectFn)
+    socket.on('systemnotice', (e: SystemNoticeMsg) => {
+      this.emitter.fire('systemnotice', e)
+    })
     socket.on('lobbyres', (e: LobbyResMsg) => {
       this.emitter.fire('lobbyres', e)
     })
