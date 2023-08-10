@@ -25,11 +25,11 @@ const msgHandler = {
           roomDB.hostSocketID = nextHost.socketID as string
           nextHost.isHost = true
         }
+        await db.put(`room:${roomID}`, roomDB)
       }
-      await db.put(`room:${roomID}`, roomDB)
-      await db.del(`player:${playerID}`)
       socket.emit('lobbynotice', { name: 'LobbyNoticeLeaveRoom', data: { playerID, roomID } } satisfies LobbyNoticeMsg)
     }
+    await db.del(`player:${playerID}`)
     await db.del(`socket:${socket.id}`)
   },
   async handleLoobyReqAndNotice (socket: Socket, msg: LobbyReqMsg | LobbyNoticeMsg): Promise<void> {
@@ -150,8 +150,8 @@ const msgHandler = {
           nextHost.isHost = true
           msg.data.newHostPlayerID = nextHost.playerID
         }
+        await db.put(`room:${roomID}`, roomDB)
       }
-      await db.put(`room:${roomID}`, roomDB)
       socket.emit('lobbynotice', msg)
       socket.to(roomID).emit('lobbynotice', msg)
     }

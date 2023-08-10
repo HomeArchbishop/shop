@@ -33,8 +33,7 @@ const dbChange = async function (key: string, path: string, value: any): Promise
 
 const dbClear = async function (): Promise<void> {
   await db.clear({
-    gte: 'player:',
-    lte: 'room:'
+    lte: 'z:static:'
   })
 }
 
