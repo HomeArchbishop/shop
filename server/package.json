@@ -110,7 +110,7 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
-    "test": "ts-node src/index.ts"
+    "test": "npx ts-node src/index.ts"
   },
   "author": "拆家大主教",
   "license": "MIT",
