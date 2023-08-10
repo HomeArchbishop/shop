@@ -1,6 +1,6 @@
 import { type Socket } from 'socket.io'
 import type { LobbyNoticeMsg, LobbyReqMsg, LobbyResMsg } from '../../share/src/types/Msg'
-import { db, dbChange, dbGet } from './levelDB'
+import { db, dbGet } from './levelDB'
 import type { SocketDB, PlayerDB, RoomDB } from './types/db'
 
 const msgHandler = {
@@ -10,15 +10,16 @@ const msgHandler = {
     if (socketDB === undefined) { return }
     const playerID = socketDB.playerID
     if (playerID === undefined) { return }
-    const roomID = (await dbGet(`player:${playerID}`) as PlayerDB)?.roomID
-    if (roomID !== undefined) { /* the player is in a room */
-      await dbChange(`player:${playerID}`, 'roomID', undefined)
-      const roomDB: RoomDB = await dbGet(`room:${roomID}`)
+    const playerDB: PlayerDB = await dbGet(`player:${playerID}`)
+    if (playerDB?.roomID === undefined) { return } /* the player is not in a room */
+    const roomID = playerDB.roomID
+    const roomDB: RoomDB = await dbGet(`room:${roomID}`)
+    if (roomDB !== undefined) {
       const index = roomDB.players.findIndex(p => p.playerID === playerID)
       if (index !== -1) { roomDB.players.splice(index, 1) }
-      if (roomDB.players.filter(p => !p.isBot).length === 0) {
+      if (roomDB.players.filter(p => !p.isBot).length === 0) { // no player left in room, delete room
         await db.del(`room:${roomID}`)
-      } else if (roomDB.hostPlayerID === playerID) {
+      } else if (roomDB.hostPlayerID === playerID) { // remains player in room, modify players and host
         const nextHost = roomDB.players.find(p => !p.isBot)
         if (nextHost !== undefined) {
           roomDB.hostPlayerID = nextHost.playerID

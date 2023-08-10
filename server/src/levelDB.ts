@@ -15,26 +15,10 @@ const dbGet = async function (key: string): Promise<any> {
   }
 }
 
-const dbChange = async function (key: string, path: string, value: any): Promise<void> {
-  const oriObj = await dbGet(key)
-  path.split('.').reduce((p, c, i, a) => {
-    if (i === a.length - 1) {
-      if (typeof value === 'function') {
-        p[c] = value(p[c])
-      } else {
-        p[c] = value
-      }
-      return p
-    }
-    return p[c]
-  }, oriObj)
-  await db.put(key, oriObj)
-}
-
 const dbClear = async function (): Promise<void> {
   await db.clear({
     lte: 'z:static:'
   })
 }
 
-export { db, dbGet, dbChange, dbClear }
+export { db, dbGet, dbClear }
