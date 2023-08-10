@@ -4,6 +4,8 @@ import { msgHandler } from './msgHandler'
 import { type SystemNoticeMsg } from '../../share/src/types/Msg'
 import { db, dbClear } from './levelDB'
 
+global.isServerDownDisconnection = false
+
 const server = createServer((_, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' })
   res.write('it works!')
@@ -30,6 +32,7 @@ server.listen(24334, () => {
 
 process.on('SIGINT', () => {
   console.log('SIGINT')
+  global.isServerDownDisconnection = true
   io.emit('systemnotice', { name: 'SystemNoticeServerError', data: { err: 900 } } satisfies SystemNoticeMsg)
   io.disconnectSockets(true)
   io.close(() => {
