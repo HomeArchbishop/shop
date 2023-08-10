@@ -5,6 +5,7 @@ import type { SocketDB, PlayerDB, RoomDB } from './types/db'
 
 const msgHandler = {
   async handleDisconnection (socket: Socket): Promise<void> {
+    if (global.isServerDownDisconnection === true) { return }
     const socketDB: SocketDB = await dbGet(`socket:${socket.id}`)
     if (socketDB === undefined) { return }
     const playerID = socketDB.playerID
@@ -26,9 +27,9 @@ const msgHandler = {
         }
       }
       await db.put(`room:${roomID}`, roomDB)
+      await db.del(`player:${playerID}`)
       socket.emit('lobbynotice', { name: 'LobbyNoticeLeaveRoom', data: { playerID, roomID } } satisfies LobbyNoticeMsg)
     }
-    await db.del(`player:${playerID}`)
     await db.del(`socket:${socket.id}`)
   },
   async handleLoobyReqAndNotice (socket: Socket, msg: LobbyReqMsg | LobbyNoticeMsg): Promise<void> {

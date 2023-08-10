@@ -31,4 +31,11 @@ const dbChange = async function (key: string, path: string, value: any): Promise
   await db.put(key, oriObj)
 }
 
-export { db, dbGet, dbChange }
+const dbClear = function (cb: () => void): void {
+  db.clear({
+    gte: 'player:',
+    lte: 'room:'
+  }, cb)
+}
+
+export { db, dbGet, dbChange, dbClear }
