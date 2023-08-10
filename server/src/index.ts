@@ -36,10 +36,9 @@ process.on('SIGINT', () => {
   io.emit('systemnotice', { name: 'SystemNoticeServerError', data: { err: 900 } } satisfies SystemNoticeMsg)
   io.disconnectSockets(true)
   io.close(() => {
-    dbClear(() => {
-      db.close(() => {
-        process.exit(0)
-      })
-    })
+    dbClear()
+      .then(async () => { await db.close() })
+      .then(async () => { process.exit(0) })
+      .catch((err) => { console.error(err); process.exit(1) })
   })
 })
