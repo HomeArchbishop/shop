@@ -143,13 +143,15 @@ const msgHandler = {
       roomDB.players.splice(targetPlayerStateIndex, 1)
       if (roomDB.players.filter(p => !p.isBot).length === 0) {
         await db.del(`room:${roomID}`)
-      } else if (roomDB.hostPlayerID === playerID) {
-        const nextHost = roomDB.players.find(p => !p.isBot)
-        if (nextHost !== undefined) {
-          roomDB.hostPlayerID = nextHost.playerID
-          roomDB.hostSocketID = nextHost.socketID as string
-          nextHost.isHost = true
-          msg.data.newHostPlayerID = nextHost.playerID
+      } else {
+        if (roomDB.hostPlayerID === playerID) {
+          const nextHost = roomDB.players.find(p => !p.isBot)
+          if (nextHost !== undefined) {
+            roomDB.hostPlayerID = nextHost.playerID
+            roomDB.hostSocketID = nextHost.socketID as string
+            nextHost.isHost = true
+            msg.data.newHostPlayerID = nextHost.playerID
+          }
         }
         await db.put(`room:${roomID}`, roomDB)
       }
