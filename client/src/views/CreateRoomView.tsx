@@ -110,6 +110,11 @@ function CreateRoomView (): React.ReactNode {
           alertsm('ROOM IS DISMISSED')
         }
       }
+      if (msg.name === 'LobbyNoticeGameStart') {
+        if (window.room?.roomID === msg.data.roomID) {
+          window.routeTo('GameView')
+        }
+      }
     })
     return () => {
       window.csController.emitter.off('lobbyres')

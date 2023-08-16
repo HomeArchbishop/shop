@@ -5,6 +5,7 @@ import CreateRoomView from './views/CreateRoomView'
 import LoginView from './views/LoginView'
 import EnterRoomView from './views/EnterRoomView'
 import SystemErrorView from './views/SystemErrorView'
+import GameView from './views/GameView'
 
 function App (): React.ReactNode {
   const [viewName, setViewName] = React.useState('LoginView')
@@ -18,6 +19,7 @@ function App (): React.ReactNode {
       {window.viewName === 'HomeView' ? <HomeView /> : null}
       {window.viewName === 'EnterRoomView' ? <EnterRoomView /> : null}
       {window.viewName === 'CreateRoomView' ? <CreateRoomView /> : null}
+      {window.viewName === 'GameView' ? <GameView /> : null}
     </>
   )
 }
