@@ -11,6 +11,8 @@ const msgHandler = {
     const playerID = socketDB.playerID
     if (playerID === undefined) { return }
     const playerDB: PlayerDB = await dbGet(`player:${playerID}`)
+    await db.del(`player:${playerID}`)
+    await db.del(`socket:${socket.id}`)
     if (playerDB?.roomID === undefined) { return } /* the player is not in a room */
     const roomID = playerDB.roomID
     const roomDB: RoomDB = await dbGet(`room:${roomID}`)
@@ -30,8 +32,6 @@ const msgHandler = {
       }
       socket.emit('lobbynotice', { name: 'LobbyNoticeLeaveRoom', data: { playerID, roomID } } satisfies LobbyNoticeMsg)
     }
-    await db.del(`player:${playerID}`)
-    await db.del(`socket:${socket.id}`)
   },
   async handleLoobyReqAndNotice (socket: Socket, msg: LobbyReqMsg | LobbyNoticeMsg): Promise<void> {
     console.log(msg)
