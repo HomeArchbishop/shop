@@ -35,6 +35,15 @@ class CSController {
     await promise
   }
 
+  async socketDisconnect (): Promise<void> {
+    let resolveFn = (): void => {}
+    const promise = new Promise<void>((resolve) => { resolveFn = resolve })
+    socket.on('disconnect', resolveFn)
+    socket.offAny()
+    socket.disconnect()
+    await promise
+  }
+
   sendLobbyReq (msg: LobbyReqMsg): string {
     msg.data._id = uid(8)
     socket.emit('lobbyreq', msg)
