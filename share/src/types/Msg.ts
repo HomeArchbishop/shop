@@ -48,6 +48,11 @@ interface LobbyNoticeLeaveRoom { /* someone leave (can be me) */
   data: { playerID: string, roomID: string, newHostPlayerID?: string }
 }
 
+interface LobbyNoticeRoomDismiss {
+  name: 'LobbyNoticeRoomDismiss'
+  data: { roomID: string }
+}
+
 interface LobbyNoticeAddBot {
   name: 'LobbyNoticeAddBot'
   data: { roomID: string, playerID?: string }
@@ -72,6 +77,7 @@ type SystemNoticeMsg = SystemNoticeServerError
 type LobbyReqMsg = LobbyReqLogin | LobbyReqCreateRoom | LobbyReqSyncPrepareRoom | LobbyReqEnterRoom
 type LobbyResMsg = LobbyResLogin | LobbyResCreateRoom | LobbyResSyncPrepareRoom | LobbyResEnterRoom
 type LobbyNoticeMsg = LobbyNoticeLeaveRoom | LobbyNoticeAddBot | LobbyNoticeAddPlayer | LobbyNoticeGameStart
+| LobbyNoticeRoomDismiss
 type GameNoticeMsg = GameNoticeAny
 
 type Msg = LobbyReqMsg | LobbyResMsg | LobbyNoticeMsg | GameNoticeMsg

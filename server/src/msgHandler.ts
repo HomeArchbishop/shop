@@ -129,6 +129,9 @@ const msgHandler = {
       const roomID: string = msg.data.roomID
       const roomDB: RoomDB = await dbGet(`room:${roomID}`)
       if (playerID === undefined || roomID === undefined || roomDB === undefined) { return }
+      const socketDB: SocketDB = await dbGet(`socket:${socket.id}`)
+      if (socketDB === undefined) { return }
+      if (socketDB.playerID !== playerID && roomDB.players.length <= 2 && roomDB.isLocked) { return }
       const targetPlayerStateIndex = roomDB.players.findIndex(p => p.playerID === playerID)
       const targetPlayerState = roomDB.players[targetPlayerStateIndex]
       if (targetPlayerStateIndex === -1) { return }
@@ -143,6 +146,11 @@ const msgHandler = {
       roomDB.players.splice(targetPlayerStateIndex, 1)
       if (roomDB.players.filter(p => !p.isBot).length === 0) {
         await db.del(`room:${roomID}`)
+      } else if (roomDB.players.length === 1 && roomDB.isLocked) {
+        socket.to(roomID).emit('lobbynotice', { name: 'LobbyNoticeRoomDismiss', data: { roomID } } satisfies LobbyNoticeMsg)
+        socket.emit('lobbynotice', msg)
+        await db.del(`room:${roomID}`)
+        return
       } else {
         if (roomDB.hostPlayerID === playerID) {
           const nextHost = roomDB.players.find(p => !p.isBot)

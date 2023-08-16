@@ -3,7 +3,8 @@ import './CreateRoomView.less'
 import NormalButton from '../components/NormalButton'
 import { Player } from '../../../share/src/game/Player'
 import type { LobbyNoticeMsg, LobbyResMsg } from '../../../share/src/types/Msg'
-import { uniqBy, initial } from 'lodash'
+import { uniqBy, initial, findLastIndex } from 'lodash'
+import { alertsm } from '../utils/swal'
 
 function CreateRoomView (): React.ReactNode {
   const [players, setPlayers] = React.useState([] as Player[])
@@ -49,8 +50,10 @@ function CreateRoomView (): React.ReactNode {
     }
   }
 
-  function noticeRemovePlayerOrBot (playerID?: string): void {
-    if (playerID === undefined) { return }
+  function noticeRemoveBot (): void {
+    const lastBotIndex = findLastIndex(players, p => p.isBot)
+    if (lastBotIndex === -1) { return }
+    const playerID = players[lastBotIndex].playerID
     if (window.room !== undefined) {
       window.csController.sendLobbyNotice({ name: 'LobbyNoticeLeaveRoom', data: { roomID: window.room.roomID, playerID } })
     }
@@ -101,6 +104,12 @@ function CreateRoomView (): React.ReactNode {
           addPlayer(new Player({ room: window.room, playerID: msg.data.playerID }))
         }
       }
+      if (msg.name === 'LobbyNoticeRoomDismiss') {
+        if (window.room?.roomID === msg.data.roomID) {
+          window.routeTo('HomeView')
+          alertsm('ROOM IS DISMISSED')
+        }
+      }
     })
     return () => {
       window.csController.emitter.off('lobbyres')
@@ -135,7 +144,7 @@ function CreateRoomView (): React.ReactNode {
           >ADD BOT</div>
           <div
             className="bar-btn"
-            onClick={() => { noticeRemovePlayerOrBot(players.find(p => p.isBot)?.playerID) }}
+            onClick={() => { noticeRemoveBot() }}
           >REMOVE BOT</div></>
           : undefined
         }
