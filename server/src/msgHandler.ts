@@ -179,6 +179,7 @@ const msgHandler = {
       if (roomID === undefined || roomDB === undefined) { return }
       if (roomDB.hostSocketID !== socket.id) { return }
       if (roomDB.isLocked) { return }
+      if (roomDB.players.length < 2) { return }
       roomDB.isLocked = true
       await db.put(`room:${roomID}`, roomDB)
       socket.to(roomID).emit('lobbynotice', { name: 'LobbyNoticeGameStart', data: { roomID } })
