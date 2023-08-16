@@ -4,8 +4,8 @@ import './swal.less'
 
 const swal = withReactContent(Swal)
 
-async function alertsm (titleText: string, text?: string): Promise<void> {
-  await swal.fire({
+function alertsm (titleText: string, text?: string): void {
+  swal.fire({
     titleText,
     text,
     toast: true,
@@ -14,7 +14,7 @@ async function alertsm (titleText: string, text?: string): Promise<void> {
     timerProgressBar: true,
     showConfirmButton: false,
     target: '#stage'
-  })
+  }).catch(() => null)
 }
 
 export { alertsm }
