@@ -141,9 +141,13 @@ function CreateRoomView (): React.ReactNode {
         }
       </div>
       { players.find(p => p.isHost)?.playerID === window.playerID
-        ? <div className="host-start-btn able" onClick={ () => { noticeGameStart() } }>
-          <span>START</span>
-        </div>
+        ? players.length > 1
+          ? <div className="host-start-btn able" onClick={ () => { noticeGameStart() } }>
+              <span>START</span>
+            </div>
+          : <div className="host-start-btn">
+              <span>PLAYER NOT ENOUGH</span>
+            </div>
         : <div className="wait-start-btn">
           <span>WAITING FOR START</span>
         </div>
