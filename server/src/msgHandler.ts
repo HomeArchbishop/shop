@@ -147,8 +147,16 @@ const msgHandler = {
       if (roomDB.players.filter(p => !p.isBot).length === 0) {
         await db.del(`room:${roomID}`)
       } else if (roomDB.players.length === 1 && roomDB.isLocked) {
+        /* change every rest player's room */
+        const playerDB: PlayerDB = await dbGet(`player:${roomDB.players[0].playerID}`)
+        if (playerDB?.roomID === roomID) {
+          playerDB.roomID = undefined
+          await db.put(`player:${roomDB.players[0].playerID}`, playerDB)
+        }
+        /* send msg & leave socket room */
         socket.to(roomID).emit('lobbynotice', { name: 'LobbyNoticeRoomDismiss', data: { roomID } } satisfies LobbyNoticeMsg)
         socket.emit('lobbynotice', msg)
+        ;(await socket.to(playerDB.socketID).fetchSockets()).forEach(s => { s.leave(roomID) })
         await db.del(`room:${roomID}`)
         return
       } else {
