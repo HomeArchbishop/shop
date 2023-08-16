@@ -10,6 +10,7 @@ function GameView (): React.ReactNode {
       console.log(msg)
       if (msg.name === 'LobbyNoticeRoomDismiss') {
         if (window.room?.roomID === msg.data.roomID) {
+          window.room = undefined
           window.routeTo('HomeView')
           alertsm('ROOM IS DISMISSED')
         }
