@@ -10,7 +10,6 @@ const resizeStage = (): void => {
   const scale = Math.min(window.innerWidth / 1240, window.innerHeight / 700)
   if (stageDiv !== null) {
     stageDiv.style.transform = `scale(${scale}, ${scale})`
-    console.log(window.innerWidth, stageDiv.getBoundingClientRect().width)
     stageDiv.style.top = String(`${~~((window.innerHeight - stageDiv.getBoundingClientRect().height) / 2)}px`)
     stageDiv.style.left = String(`${~~((window.innerWidth - stageDiv.getBoundingClientRect().width) / 2)}px`)
   }
