@@ -21,6 +21,16 @@ class Player {
   isBot: boolean
 
   room: Room
+
+  states: {
+    house: 'center' | 'shop' | 'iron' | 'machine' | 'magic'
+    life: number
+    step: number
+  } = {
+      house: 'center',
+      life: 1,
+      step: 1
+    }
 }
 
 export { Player }

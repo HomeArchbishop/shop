@@ -2,14 +2,159 @@
   width: 100%;
   height: 100%;
   position: relative;
-  #tipArea {
+  .back-btn-list {
     position: absolute;
-    top: 340px;
-    left: 400px;
-    width: 1240px - 800px;
-    font-size: 32px;
-    font-weight: 900;
+    top: 6px;
+    right: 6px;
+    button {
+      float: left;
+      border-radius: 25%;
+    }
+    .roomInfo {
+      float: left;
+      margin-left: 4px;
+      color: #f3f3f3;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 20px;
+    }
+  }
+  .tip-area {
+    position: absolute;
+    top: 105px;
+    left: 30px;
+    height: 500px;
+    width: 220px;
+    background: #232528;
     color: #f3f3f3;
-    text-align: center;
+    padding: 10px;
+    overflow: scroll;
+    .tip-msg {
+      font-weight: 100;
+      .playerID {
+        font-weight: 800;
+      }
+    }
+  }
+  .map-area {
+    position: absolute;
+    top: 105px;
+    left: 260px;
+    height: 500px;
+    width: 500px;
+    background: #232528;
+    color: #f3f3f3;
+    padding: 20px;
+    overflow: scroll;
+    .house {
+      @margin: 12px;
+      @width: 158px;
+      @border: 2px;
+      position: absolute;
+      height: @width;
+      width: @width;
+      background: transparent;
+      border: @border solid #898ddd93;
+      font-weight: 200;
+      font-size: 12px;
+      &#centerHS {
+        top: @margin + @width;
+        left: @margin + @width;
+        border: none;
+      }
+      &#shopHS {
+        top: @margin + @border;
+        left: @margin + @width;
+      }
+      &#machineHS {
+        top: @margin + @width;
+        left: @margin + @border
+      }
+      &#ironHS {
+        top: @margin + @width;
+        left: @margin + 2 * @width - @border;
+      }
+      &#magicHS {
+        top: @margin + 2 * @width - @border;
+        left: @margin + @width;
+      }
+      .hs-name {
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+      }
+      .chess-layer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        height: 88%;
+        .player-chess {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: #313339;
+          border-radius: 100%;
+          margin: 2px;
+          width: 40px;
+          height: 40px;
+          position: relative;
+          .chess-name {
+            font-size: 20px;
+            font-weight: 800;
+          }
+          .detail-card {
+            position: absolute;
+            bottom: 44px;
+            width: 100px;
+            padding: 4px;
+            background: #313339;
+            z-index: 10;
+            font-size: 12px;
+            .playerID {
+              font-weight: 400;
+              .bot {
+                font-weight: 100;
+                margin-left: 4px;
+              }
+            }
+            .line {
+              color: #a9a9a9;
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              .title {
+                font-weight: 400;
+              }
+              .content {
+                font-weight: 100;
+              }
+            }
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -2px;
+              left: 46px;
+              transform: rotate(45deg);
+              background: #313339;
+              width: 8px;
+              height: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .operation-area {
+    position: absolute;
+    top: 105px;
+    left: 770px;
+    height: 500px;
+    width: 1210px - 770px;
+    background: #232528;
+    color: #f3f3f3;
+    padding: 20px;
+    overflow: scroll;
   }
 }
