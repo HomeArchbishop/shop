@@ -13,6 +13,7 @@ function GameView (): React.ReactNode {
 
   const [players, setPlayers] = React.useState(window.room.players)
   const [msg, setMsg] = React.useState([] as Array<{ type: 'tip', text: string }>)
+  const [unreadMsgCnt, setUnreadMsgCnt] = React.useState(0)
 
   function PlayerChess (p: Player, i: number): React.ReactNode {
     const [isShowDetails, setIsShowDetails] = React.useState(false)
@@ -62,11 +63,27 @@ function GameView (): React.ReactNode {
     setMsg(msg => [...msg, { type, text }])
   }
 
-  React.useEffect(() => {
-    tipAreaRef.current?.scrollTo(0, tipAreaRef.current.scrollHeight)
+  React.useLayoutEffect(() => { // new left-side msg & scroll
+    const dom = tipAreaRef.current
+    const lastMsg = dom?.children[dom.childElementCount - 1]
+    if (dom === undefined || dom === null || lastMsg === undefined || lastMsg === null) { return }
+    if (dom.scrollHeight - (dom.scrollTop + dom.clientHeight) <= lastMsg.clientHeight + 20) {
+      dom.scrollTo(0, dom.scrollHeight)
+    } else {
+      setUnreadMsgCnt(n => n + 1)
+    }
   }, [msg])
 
   React.useEffect(() => {
+    const dom = tipAreaRef.current
+    const lastMsg = dom?.children[dom.childElementCount - 1]
+    if (dom !== undefined && dom !== null && lastMsg !== undefined && lastMsg !== null) {
+      dom.addEventListener('scroll', () => {
+        if (dom.scrollHeight - (dom.scrollTop + dom.clientHeight) <= lastMsg.clientHeight + 20) {
+          setUnreadMsgCnt(0)
+        }
+      })
+    }
     window.csController.emitter.on('lobbynotice', ({ data }) => {
       const msg: LobbyNoticeMsg = data
       console.log(msg)
@@ -96,7 +113,7 @@ function GameView (): React.ReactNode {
     <div id="gameViewContainer">
       <div className="back-btn-list">
         <NormalButton
-          text="&#11164;" width="40px" height='40px'
+          text="<" width="40px" height='40px'
           onClick={ () => { leaveRoom() } }
         />
         <div className="roomInfo">
@@ -104,9 +121,17 @@ function GameView (): React.ReactNode {
           <div>PLAYER:&ensp;{players.length}</div>
         </div>
       </div>
-      <div className="tip-area" ref={tipAreaRef}>
-        <div className="tip-msg"><span className="playerID">111</span> killed <span className="playerID">222</span>.</div>
-        { msg.map((msg, i) => msg.type === 'tip' ? <div className="tip-msg" key={i}>{ msg.text }</div> : undefined) }
+      <div className="tip-area">
+        {
+          unreadMsgCnt > 0 &&
+          <div className="new-msg-tip" onClick={() => { tipAreaRef.current?.scrollTo(0, tipAreaRef.current.scrollHeight) }}>
+            &#9660;{unreadMsgCnt > 99 ? '99+' : unreadMsgCnt}
+          </div>
+        }
+        <div className="tip-track" ref={tipAreaRef}>
+          <div className="tip-msg"><span className="playerID">111</span> killed <span className="playerID">222</span>.</div>
+          { msg.map((msg, i) => msg.type === 'tip' ? <div className="tip-msg" key={i}>{ msg.text }</div> : undefined) }
+        </div>
       </div>
       <div className="map-area">
         <div className="house" id="centerHS">

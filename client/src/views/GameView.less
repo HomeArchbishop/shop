@@ -8,7 +8,7 @@
     right: 6px;
     button {
       float: left;
-      border-radius: 25%;
+      border-radius: 0;
     }
     .roomInfo {
       float: left;
@@ -27,12 +27,35 @@
     width: 220px;
     background: #232528;
     color: #f3f3f3;
-    padding: 10px;
-    overflow: scroll;
-    .tip-msg {
-      font-weight: 100;
-      .playerID {
-        font-weight: 800;
+    .new-msg-tip {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 1400;
+      position: absolute;
+      bottom: 12px;
+      right: 0;
+      padding: 4px;
+      height: 34px;
+      min-width: 34px;
+      background: #614efb;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .tip-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: scroll;
+      height: 500px;
+      width: 220px;
+      padding: 10px;
+      .tip-msg {
+        font-weight: 100;
+        .playerID {
+          font-weight: 800;
+        }
       }
     }
   }
